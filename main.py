@@ -7,7 +7,7 @@ from softmax import softmax_regression, compute_test_error, plot_cost_function_o
 from softmax import update_y, compute_test_error_mod3
 from softmax import softmax_kernel_regression, compute_kernel_test_error
 from features import plot_PC, principal_components, project_onto_PC, center_data, cubic_features, reconstruct_PC
-from kernel import linear_kernel
+from kernel import linear_kernel, polynomial_kernel
 
 #######################################################################
 # 1. Introduction
@@ -226,7 +226,14 @@ def run_kernel_softmax(model, kernel, train_x, train_y, temp_parameter, k=10, pl
     return theta
 
 temp_parameter = 1
+
 theta = run_kernel_softmax("lineal_pca18", linear_kernel, train_pca, train_y, temp_parameter)
 test_error = compute_kernel_test_error(test_pca, test_y, linear_kernel, theta, train_pca, temp_parameter)
 print('\nsoftmax_kernel lineal_pca18 \ttest_error:')
+print('(t = {})  \t\t\t{:.3}'.format(temp_parameter, test_error))
+
+kernel = lambda X,Y: polynomial_kernel(X,Y, 0.5, 2)
+theta = run_kernel_softmax("polinomial_pca18", kernel, train_pca, train_y, temp_parameter)
+test_error = compute_kernel_test_error(test_pca, test_y, kernel, theta, train_pca, temp_parameter)
+print('\nsoftmax_kernel polinomial_pca18 \ttest_error:')
 print('(t = {})  \t\t\t{:.3}'.format(temp_parameter, test_error))
