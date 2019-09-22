@@ -178,18 +178,18 @@ secondimage_reconstructed = reconstruct_PC(train_pca[1, :], pcs, n_components, t
 # train_cube = cubic_features(train_pca10)
 # test_cube = cubic_features(test_pca10)
 
-# #######################################################################
-# # 7. Classification Using Manually Crafted Features
-# #######################################################################
+#######################################################################
+# 7. Classification Using Manually Crafted Features
+#######################################################################
 
-# temp_parameter = 1
+temp_parameter = 1
 
-# # Train softmax regression model using (train_pca, train_y)
-# # and evaluate its accuracy on (test_pca, test_y).
-# theta = run_softmax("pca18", train_pca, train_y, temp_parameter)
-# test_error = compute_test_error(test_pca, test_y, theta, temp_parameter)
-# print('\nsoftmax pca18 \t\ttest_error:')
-# print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error))
+# Train softmax regression model using (train_pca, train_y)
+# and evaluate its accuracy on (test_pca, test_y).
+theta = run_softmax("pca18", train_pca, train_y, temp_parameter)
+test_error = compute_test_error(test_pca, test_y, theta, temp_parameter)
+print('\nsoftmax pca18 \t\ttest_error:')
+print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error))
 
 # # train softmax regression model using (train_cube, train_y)
 # # and evaluate its accuracy on (test_cube, test_y).

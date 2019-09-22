@@ -291,7 +291,7 @@ def get_kernel_classification(X, kernel, theta, Xt, temp_parameter):
     """
     X = augment_feature_vector(X)
     Xt = augment_feature_vector(Xt)
-    K = kernel(X, Xt)
+    K = kernel(Xt, X)
     probabilities = compute_kernel_probabilities(theta, K, temp_parameter)
     return np.argmax(probabilities, axis = 0)
 

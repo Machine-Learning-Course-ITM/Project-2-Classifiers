@@ -16,9 +16,7 @@ def linear_kernel(X, Y):
         Returns:
             kernel_matrix - (n, m) Numpy array containing the kernel matrix
     """
-    K = np.empty((X.shape[0], Y.shape[0]))
-    np.dot(X, Y.T, out=K)
-    return K
+    return np.dot(X, Y.T)
 
 def polynomial_kernel(X, Y, c, p):
     """
