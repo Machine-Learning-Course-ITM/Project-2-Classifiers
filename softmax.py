@@ -268,10 +268,9 @@ def softmax_kernel_regression(X, Y, kernel, temp_parameter, alpha, lambda_factor
     BUFF2 = np.empty((k, X.shape[0]))
     J = np.arange(0, theta.shape[0], 1).reshape(theta.shape[0],1)
     JY = (J == Y).astype(float)  
-    cost = np.array((num_iterations,))
+    cost = np.empty((num_iterations,))
     for i in range(num_iterations):
-        _cost = run_kernel_gradient_descent_iteration(theta, K, JY, alpha, lambda_factor, temp_parameter, BUFF1, BUFF2)
-        print(_cost)
+        cost[i] = run_kernel_gradient_descent_iteration(theta, K, JY, alpha, lambda_factor, temp_parameter, BUFF1, BUFF2)
     return theta, cost
 
 def get_kernel_classification(X, kernel, theta, Xt, temp_parameter):

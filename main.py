@@ -130,19 +130,19 @@ def run_softmax(model, train_x, train_y, temp_parameter, k=10, plot_cost=False, 
 # 6. Changing Labels
 #######################################################################
 
-temp_parameters = [0.5, 1, 2]
+# temp_parameters = [0.5, 1, 2]
 
-print('\nsoftmax original \ttest_error_mod3:')
-for temp_parameter in temp_parameters:
-    theta = run_softmax("original", train_x, train_y, temp_parameter)
-    test_error_mod3 = compute_test_error_mod3(test_x, update_y(test_y), theta, temp_parameter)
-    print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error_mod3))
+# print('\nsoftmax original \ttest_error_mod3:')
+# for temp_parameter in temp_parameters:
+#     theta = run_softmax("original", train_x, train_y, temp_parameter)
+#     test_error_mod3 = compute_test_error_mod3(test_x, update_y(test_y), theta, temp_parameter)
+#     print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error_mod3))
 
-print('\nsoftmax mod3 \t\ttest_error:')
-for temp_parameter in temp_parameters:
-    theta = run_softmax("mod3", train_x, update_y(train_y), temp_parameter, 3)
-    test_error = compute_test_error(test_x, update_y(test_y), theta, temp_parameter)
-    print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error))
+# print('\nsoftmax mod3 \t\ttest_error:')
+# for temp_parameter in temp_parameters:
+#     theta = run_softmax("mod3", train_x, update_y(train_y), temp_parameter, 3)
+#     test_error = compute_test_error(test_x, update_y(test_y), theta, temp_parameter)
+#     print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error))
 
 
 #######################################################################
