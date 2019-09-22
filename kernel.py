@@ -55,12 +55,17 @@ def rbf_kernel(X, Y, gamma):
         Returns:
             kernel_matrix - (n, m) Numpy array containing the kernel matrix
     """
-    X2 = X.reshape((X.shape[0], 1, X.shape[1]), order='F')
-    Y2 = Y.reshape((1, Y.shape[0], Y.shape[1]), order='F')
     K = np.empty((X.shape[0], Y.shape[0]))
-    temp = X2 - Y2
-    np.power(temp, 2, out=temp)
-    np.sum(temp, axis=2, out=K)
-    np.multiply(K, -gamma, out=K)
-    np.exp(K, out=K)
+    # X2 = X.reshape((X.shape[0], 1, X.shape[1]), order='F')
+    # Y2 = Y.reshape((1, Y.shape[0], Y.shape[1]), order='F')
+    # temp = X2 - Y2
+    # np.power(temp, 2, out=temp)
+    # np.sum(temp, axis=2, out=K)
+    # np.multiply(K, -gamma, out=K)
+    # np.exp(K, out=K)
+    # return K
+    for i in range(X.shape[0]):
+        for j in range(Y.shape[0]):
+            K[i,j] = np.exp(-gamma*((X[i,:] - Y[j,:])**2).sum()) 
     return K
+
