@@ -1,8 +1,5 @@
 import numpy as np
 
-### Functions for you to fill in ###
-
-
 def linear_kernel(X, Y):
     """
         Compute the linear kernel between two matrices X and Y::
@@ -33,13 +30,10 @@ def polynomial_kernel(X, Y, c, p):
         Returns:
             kernel_matrix - (n, m) Numpy array containing the kernel matrix
     """
-    K = np.empty((X.shape[0], Y.shape[0]))
-    np.dot(X, Y.T, out=K)
+    K = np.dot(X, Y.T)
     np.add(K, c, out = K)
     np.power(K, p, out=K)
     return K
-
-
 
 def fast_rbf_kernel(X, Y, gamma, BUFF, OUT):
     X2 = X.reshape((X.shape[0], 1, X.shape[1]), order='F')
@@ -51,7 +45,7 @@ def fast_rbf_kernel(X, Y, gamma, BUFF, OUT):
     np.exp(OUT, out=OUT)
     return OUT
 
-def rbf_kernel(X, Y, gamma, mem_limit=500e6, vervose=True):
+def rbf_kernel(X, Y, gamma, mem_limit=500e6, vervose=False):
     """
         Compute the Gaussian RBF kernel between two matrices X and Y::
             K(x, y) = exp(-gamma ||x-y||^2)

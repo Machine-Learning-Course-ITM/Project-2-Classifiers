@@ -1,9 +1,6 @@
 import numpy as np
 from sklearn.svm import LinearSVC
 
-
-### Functions for you to fill in ###
-
 def one_vs_rest_svm(train_x, train_y, test_x, C=0.1):
     """
     Trains a linear SVM for binary classifciation
@@ -19,8 +16,6 @@ def one_vs_rest_svm(train_x, train_y, test_x, C=0.1):
     lcf.fit(train_x, train_y)
     return lcf.predict(test_x)
 
-
-
 def multi_class_svm(train_x, train_y, test_x, C=0.1):
     """
     Trains a linear SVM for multiclass classifciation using a one-vs-rest strategy
@@ -35,7 +30,6 @@ def multi_class_svm(train_x, train_y, test_x, C=0.1):
     lcf = LinearSVC(random_state=0, C=C, max_iter=10000)
     lcf.fit(train_x, train_y)
     return lcf.predict(test_x)
-
 
 def compute_test_error_svm(test_y, pred_test_y):
     return 1 - (test_y == pred_test_y).mean()

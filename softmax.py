@@ -1,10 +1,7 @@
 import sys
-import utils
-#from utils import *
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.sparse as sparse
-
 
 def augment_feature_vector(X):
     """
@@ -227,16 +224,13 @@ def run_kernel_gradient_descent_iteration(theta, K, JY, alpha, lambda_factor, te
     """
     np.dot(theta, K, out=BUFF1)
     cost2 = (lambda_factor/2)*np.sum(BUFF1)
-
     np.divide(BUFF1, temp_parameter, out=BUFF1)
     np.subtract(BUFF1, np.max(BUFF1, axis=0), out=BUFF1)
     np.exp(BUFF1, out=BUFF1)
     np.divide(BUFF1, BUFF1.sum(axis=0), out=BUFF1)
-      
     np.log(BUFF1, out=BUFF2)
     np.multiply(JY, BUFF2, out=BUFF2)
     cost = -np.sum(BUFF2)/K.shape[0] + cost2
-
     np.subtract(JY, BUFF1, out=BUFF1)
     np.multiply(BUFF1, alpha/(temp_parameter*K.shape[0]), out=BUFF1)
     np.multiply(theta, (1-alpha*lambda_factor), out=theta)

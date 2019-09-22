@@ -1,14 +1,11 @@
-import sys
-sys.path.append("..")
 import utils
-from utils import *
 import numpy as np
 from features import cubic_features
 
 def verify_cubic_features1D():
     X=np.array([[np.sqrt(3)],[0]])
     X_cube=np.sort(cubic_features(X))
-    X_correct = np.array([[ 1., np.sqrt(9), np.sqrt(27), np.sqrt(27)],[0., 0., 0., 1.]]);
+    X_correct = np.array([[ 1., np.sqrt(9), np.sqrt(27), np.sqrt(27)],[0., 0., 0., 1.]])
     
     if np.all(np.absolute(X_cube-X_correct) < 1.0e-6):
         print ("Verifying cubic features of 1 dimension: Passed")

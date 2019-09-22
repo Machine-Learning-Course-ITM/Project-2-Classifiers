@@ -1,20 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def project_onto_PC(X_centered, pcs, n_components):
     """
     Given principal component vectors pcs = principal_components(X)
     this function returns a new data array in which each sample in X
     has been projected onto the first n_components principcal components.
     """
-    # TODO: Return the projection of the centered dataset
-    #       on the first n_components principal components.
-    #       This should be an array with dimensions: n x n_components.
     return X_centered @ pcs[:,0:n_components]
-
-
-### Functions which are already complete, for you to use ###
 
 def cubic_features(X):
     """
@@ -137,7 +130,6 @@ def plot_PC(X_centered, pcs, labels):
     ax.set_xlabel('PC 1')
     ax.set_ylabel('PC 2')
     plt.show()
-
 
 def reconstruct_PC(x_pca, pcs, n_components, X):
     """

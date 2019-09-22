@@ -13,11 +13,9 @@ def plot_images(X):
     for i in range(num_images):
         reshaped_image = X[i,:].reshape(28,28)
         plt.subplot(num_rows, num_cols, i+1)
-        #plt.imshow(reshaped_image, cmap = cm.Greys_r)
         plt.imshow(reshaped_image, cmap = 'gray')
         plt.axis('off')
     plt.show()
-
 
 def pick_examples_of(X, Y, labels, total_count):
     bool_arr = None
@@ -30,7 +28,6 @@ def pick_examples_of(X, Y, labels, total_count):
     filtered_x = X[bool_arr]
     filtered_y = Y[bool_arr]
     return (filtered_x[:total_count], filtered_y[:total_count])
-
 
 def extract_training_and_test_examples_with_labels(train_x, train_y, test_x, test_y, labels, training_count, test_count):
     filtered_train_x, filtered_train_y = pick_examples_of(train_x, train_y, labels, training_count)
@@ -73,7 +70,6 @@ def load_train_and_test_pickle(file_name):
     train_x, train_y, test_x, test_y = read_pickle_data(file_name)
     return train_x, train_y, test_x, test_y
 
-# returns the feature set in a numpy ndarray
 def load_CSV(filename):
     stuff = np.asarray(np.loadtxt(open(filename, 'rb'), delimiter=','))
     return stuff

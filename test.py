@@ -8,8 +8,6 @@ import svm
 import softmax
 import features
 import kernel
-
-sys.path.append("..")
 import utils
 
 verbose = False
@@ -103,7 +101,7 @@ def check_list(ex_name, f, exp_res, *args):
 
 def check_get_mnist():
     ex_name = "Get MNIST data"
-    train_x, train_y, test_x, test_y = utils.get_MNIST_data()
+    _, _, _, _ = utils.get_MNIST_data()
     log(green("PASS"), ex_name, "")
 
 
@@ -123,7 +121,7 @@ def check_closed_form():
 def check_svm():
     ex_name = "One vs rest SVM"
     n, m, d = 5, 3, 7
-    train_x = np.random.random((n, d))
+    train_x = np.random.rand(n, d)
     test_x = train_x[:m]
     train_y = np.zeros(n)
     train_y[-1] = 1
@@ -254,8 +252,8 @@ def check_polynomial_kernel():
     n, m, d = 3, 5, 7
     c = 1
     p = 2
-    X = np.random.random((n, d))
-    Y = np.random.random((m, d))
+    X = np.random.rand(n, d)
+    Y = np.random.rand(m, d)
     try:
         K = kernel.polynomial_kernel(X, Y, c, d)
     except NotImplementedError:
@@ -277,8 +275,8 @@ def check_rbf_kernel():
     ex_name = "RBF kernel"
     n, m, d = 3, 5, 7
     gamma = 0.5
-    X = np.random.random((n, d))
-    Y = np.random.random((m, d))
+    X = np.random.rand(n, d)
+    Y = np.random.rand(m, d)
     try:
         K = kernel.rbf_kernel(X, Y, gamma)
     except NotImplementedError:
