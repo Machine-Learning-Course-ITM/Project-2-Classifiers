@@ -64,7 +64,7 @@ Cs = [0.001, 0.01, 0.1, 1]
 print('\nSVM one vs. rest \ttest_error:')
 for C in Cs:
     svm_one_vs_rest_test_error = run_svm_one_vs_rest_on_MNIST(C)
-    print('(C = {})  \t\t{:-4}'.format(C, svm_one_vs_rest_test_error))
+    print('(C = {})  \t\t{:.4}'.format(C, svm_one_vs_rest_test_error))
 
 
 
