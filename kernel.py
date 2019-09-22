@@ -51,7 +51,7 @@ def fast_rbf_kernel(X, Y, gamma, BUFF, OUT):
     np.exp(OUT, out=OUT)
     return OUT
 
-def rbf_kernel(X, Y, gamma, mem_limit=500e6):
+def rbf_kernel(X, Y, gamma, mem_limit=500e6, vervose=True):
     """
         Compute the Gaussian RBF kernel between two matrices X and Y::
             K(x, y) = exp(-gamma ||x-y||^2)
@@ -70,12 +70,16 @@ def rbf_kernel(X, Y, gamma, mem_limit=500e6):
     Ny, Ry = divmod(Y.shape[0], bs)
     BUFF = np.empty((bs, bs, X.shape[1]))
     K = np.empty((X.shape[0], Y.shape[0]))
+    if vervose:
+        print("Bs= {}, Nx = {}, Ny = {}".format(bs, Nx, Ny))
     for i in range(Nx):
         for j in range(Ny):
             fast_rbf_kernel(    X[i*bs:(i+1)*bs,:], 
                                 Y[j*bs:(j+1)*bs,:], 
                                 gamma, BUFF, 
                                 K[i*bs:(i+1)*bs, j*bs:(j+1)*bs])
+            if vervose:
+                print("success: {}, {}".format(i,j))
 
         fast_rbf_kernel(    X[i*bs:(i+1)*bs,:], 
                             Y[Ny*bs:,:], gamma, 
