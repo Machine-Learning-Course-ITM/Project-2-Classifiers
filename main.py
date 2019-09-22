@@ -1,10 +1,11 @@
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import read_pickle_data, write_pickle_data, plot_images, get_MNIST_data, plot_images
+from utils import read_pickle_data, write_pickle_data, plot_images, get_MNIST_data
 from linear_regression import compute_test_error_linear, closed_form
 from svm import one_vs_rest_svm, multi_class_svm, compute_test_error_svm
-from softmax import update_y, softmax_regression, compute_test_error, compute_test_error_mod3, plot_cost_function_over_time, softmax_kernel_regression, compute_kernel_test_error
+from softmax import softmax_regression, compute_test_error, plot_cost_function_over_time
+from softmax import update_y, compute_test_error_mod3
+from softmax import softmax_kernel_regression, compute_kernel_test_error
 from features import plot_PC, principal_components, project_onto_PC, center_data, cubic_features, reconstruct_PC
 from kernel import linear_kernel
 
@@ -225,7 +226,7 @@ def run_kernel_softmax(model, kernel, train_x, train_y, temp_parameter, k=10, pl
     return theta
 
 temp_parameter = 1
-k_train_x, k_train_y = train_pca, train_y
-theta = run_kernel_softmax("lineal_pca18", linear_kernel, k_train_x, k_train_y, temp_parameter)
-test_error = compute_kernel_test_error(test_pca, test_y, linear_kernel, theta, k_train_x, temp_parameter)
-print(test_error)
+theta = run_kernel_softmax("lineal_pca18", linear_kernel, train_pca, train_y, temp_parameter)
+test_error = compute_kernel_test_error(test_pca, test_y, linear_kernel, theta, train_pca, temp_parameter)
+print('\nsoftmax_kernel lineal_pca18 \ttest_error:')
+print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error))
