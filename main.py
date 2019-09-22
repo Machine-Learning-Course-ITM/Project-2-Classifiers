@@ -229,4 +229,4 @@ temp_parameter = 1
 theta = run_kernel_softmax("lineal_pca18", linear_kernel, train_pca, train_y, temp_parameter)
 test_error = compute_kernel_test_error(test_pca, test_y, linear_kernel, theta, train_pca, temp_parameter)
 print('\nsoftmax_kernel lineal_pca18 \ttest_error:')
-print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error))
+print('(t = {})  \t\t\t{:.3}'.format(temp_parameter, test_error))
