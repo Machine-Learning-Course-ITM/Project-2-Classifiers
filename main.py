@@ -37,10 +37,10 @@ def run_linear_regression_on_MNIST(lambda_factor=1):
     return test_error
 
 lambda_factors = [1, 0.1, 0.01]
-print('\nLinear Regression test_error:')
+print('\nLinear Regression \ttest_error:')
 for lambda_factor in lambda_factors:
     lr_test_error = run_linear_regression_on_MNIST(lambda_factor=lambda_factor)
-    print('(lambda = {})\t'.format(lambda_factor), lr_test_error)
+    print('(lambda = {})\t\t{:3}'.format(lambda_factor, lr_test_error))
 
 #######################################################################
 # 3. Support Vector Machine
@@ -61,10 +61,10 @@ def run_svm_one_vs_rest_on_MNIST(C=0.1):
     return test_error
 
 Cs = [0.001, 0.01, 0.1, 1]
-print('\nSVM one vs. rest test_error:')
+print('\nSVM one vs. rest \ttest_error:')
 for C in Cs:
     svm_one_vs_rest_test_error = run_svm_one_vs_rest_on_MNIST(C)
-    print('(C = {})  \t'.format(C), svm_one_vs_rest_test_error)
+    print('(C = {})  \t\t{:-4}'.format(C, svm_one_vs_rest_test_error))
 
 
 
@@ -81,10 +81,10 @@ def run_multiclass_svm_on_MNIST(C=0.1):
     return test_error
 
 Cs = [0.001, 0.01, 0.1]
-print('\nMulticlass SVM test_error:')
+print('\nMulticlass SVM \ttest_error:')
 for C in Cs:
     multiclass_svm_test_error = run_multiclass_svm_on_MNIST(C)
-    print('(C = {})  \t'.format(C), multiclass_svm_test_error)
+    print('(C = {})  \t\t{:.4}'.format(C, multiclass_svm_test_error))
 
 
 #######################################################################
