@@ -41,7 +41,17 @@ def polynomial_kernel(X, Y, c, p):
 
 
 
-def rbf_kernel(X, Y, gamma):
+def fast_rbf_kernel(X, Y, gamma, BUFF, OUT):
+    X2 = X.reshape((X.shape[0], 1, X.shape[1]), order='F')
+    Y2 = Y.reshape((1, Y.shape[0], Y.shape[1]), order='F')
+    np.subtract(X2, Y2, out=BUFF)
+    np.power(BUFF, 2, out=BUFF)
+    np.sum(BUFF, axis=2, out=OUT)
+    np.multiply(OUT, -gamma, out=OUT)
+    np.exp(OUT, out=OUT)
+    return OUT
+
+def rbf_kernel(X, Y, gamma, mem_limit=500e6):
     """
         Compute the Gaussian RBF kernel between two matrices X and Y::
             K(x, y) = exp(-gamma ||x-y||^2)
@@ -55,17 +65,31 @@ def rbf_kernel(X, Y, gamma):
         Returns:
             kernel_matrix - (n, m) Numpy array containing the kernel matrix
     """
+    bs = int(np.sqrt((mem_limit/8)/X.shape[1]))
+    Nx, Rx = divmod(X.shape[0], bs) 
+    Ny, Ry = divmod(Y.shape[0], bs)
+    BUFF = np.empty((bs, bs, X.shape[1]))
     K = np.empty((X.shape[0], Y.shape[0]))
-    # X2 = X.reshape((X.shape[0], 1, X.shape[1]), order='F')
-    # Y2 = Y.reshape((1, Y.shape[0], Y.shape[1]), order='F')
-    # temp = X2 - Y2
-    # np.power(temp, 2, out=temp)
-    # np.sum(temp, axis=2, out=K)
-    # np.multiply(K, -gamma, out=K)
-    # np.exp(K, out=K)
-    # return K
-    for i in range(X.shape[0]):
-        for j in range(Y.shape[0]):
-            K[i,j] = np.exp(-gamma*((X[i,:] - Y[j,:])**2).sum()) 
+    for i in range(Nx):
+        for j in range(Ny):
+            fast_rbf_kernel(    X[i*bs:(i+1)*bs,:], 
+                                Y[j*bs:(j+1)*bs,:], 
+                                gamma, BUFF, 
+                                K[i*bs:(i+1)*bs, j*bs:(j+1)*bs])
+
+        fast_rbf_kernel(    X[i*bs:(i+1)*bs,:], 
+                            Y[Ny*bs:,:], gamma, 
+                            BUFF[:, 0:Ry,:],
+                            K[i*bs:(i+1)*bs, Ny*bs:])
+    for j in range(Ny):
+        fast_rbf_kernel(    X[Nx*bs:,:], 
+                            Y[j*bs:(j+1)*bs,:], 
+                            gamma, BUFF[0:Rx, :, :], 
+                            K[Nx*bs:, j*bs:(j+1)*bs])
+
+    fast_rbf_kernel(    X[Nx*bs:,:], 
+                        Y[Ny*bs:,:], gamma, 
+                        BUFF[0:Rx, 0:Ry,:],
+                        K[Nx*bs:, Ny*bs:])
     return K
 
