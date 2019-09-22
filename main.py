@@ -66,8 +66,6 @@ for C in Cs:
     svm_one_vs_rest_test_error = run_svm_one_vs_rest_on_MNIST(C)
     print('(C = {})  \t\t{:.4}'.format(C, svm_one_vs_rest_test_error))
 
-
-
 def run_multiclass_svm_on_MNIST(C=0.1):
     """
     Trains svm, classifies test data, computes test error on test set
@@ -81,7 +79,7 @@ def run_multiclass_svm_on_MNIST(C=0.1):
     return test_error
 
 Cs = [0.001, 0.01, 0.1]
-print('\nMulticlass SVM \ttest_error:')
+print('\nMulticlass SVM \t\ttest_error:')
 for C in Cs:
     multiclass_svm_test_error = run_multiclass_svm_on_MNIST(C)
     print('(C = {})  \t\t{:.4}'.format(C, multiclass_svm_test_error))
