@@ -216,7 +216,7 @@ def run_kernel_softmax(model, kernel, train_x, train_y, temp_parameter, k=10, pl
     """
     theta = read_pickle_data("{}/softmax_kernel_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
     if theta is None:
-        theta, cost_function_history = softmax_kernel_regression(train_x, train_y, kernel, temp_parameter, k=k, alpha=0.3, lambda_factor=1.0e-4, num_iterations=150)
+        theta, cost_function_history = softmax_kernel_regression(train_x, train_y, kernel, temp_parameter, alpha=0.3, lambda_factor=1.0e-4, k=k, num_iterations=150)
         # Save the model parameters theta obtained from calling softmax_regression to disk.
         write_pickle_data(theta, "{}/softmax_kernel_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
         write_pickle_data(cost_function_history, "{}/softmax_kernel_{}_cost_{}.pkl.gz".format(folder_cache, model,temp_parameter))
