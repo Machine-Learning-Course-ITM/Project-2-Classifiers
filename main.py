@@ -90,32 +90,32 @@ def run_multiclass_svm_on_MNIST(C=0.1):
 #     print('(C = {})  \t'.format(C), multiclass_svm_test_error)
 
 
-# #######################################################################
-# # 4. Multinomial (Softmax) Regression and Gradient Descent
-# #######################################################################
+#######################################################################
+# 4. Multinomial (Softmax) Regression and Gradient Descent
+#######################################################################
 
-# def run_softmax(model, train_x, train_y, temp_parameter, plot_cost=False, folder_cache='./softmax'):
-#     """
-#     Runs softmax_regression on the training set
+def run_softmax(model, train_x, train_y, temp_parameter, k=10, plot_cost=False, folder_cache='./softmax'):
+    """
+    Runs softmax_regression on the training set
     
-#     It uses the following values for parameters:
-#     alpha = 0.3
-#     lambda = 1e-4
-#     num_iterations = 150
+    It uses the following values for parameters:
+    alpha = 0.3
+    lambda = 1e-4
+    num_iterations = 150
 
-#     Returns:
-#         Final theta
-#     """
-#     theta = read_pickle_data("{}/softmax_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
-#     if theta is None:
-#         theta, cost_function_history = softmax_regression(train_x, train_y, temp_parameter, alpha=0.3, lambda_factor=1.0e-4, k=10, num_iterations=150)
-#         # Save the model parameters theta obtained from calling softmax_regression to disk.
-#         write_pickle_data(theta, "{}/softmax_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
-#         write_pickle_data(cost_function_history, "{}/softmax_{}_cost_{}.pkl.gz".format(folder_cache, model,temp_parameter))
-#     if plot_cost:
-#         cost = read_pickle_data("{}/softmax_{}_cost_{}.pkl.gz".format(folder_cache, model, temp_parameter))
-#         plot_cost_function_over_time(cost)
-#     return theta
+    Returns:
+        Final theta
+    """
+    theta = read_pickle_data("{}/softmax_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
+    if theta is None:
+        theta, cost_function_history = softmax_regression(train_x, train_y, temp_parameter, alpha=0.3, lambda_factor=1.0e-4, k=k, num_iterations=150)
+        # Save the model parameters theta obtained from calling softmax_regression to disk.
+        write_pickle_data(theta, "{}/softmax_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
+        write_pickle_data(cost_function_history, "{}/softmax_{}_cost_{}.pkl.gz".format(folder_cache, model,temp_parameter))
+    if plot_cost:
+        cost = read_pickle_data("{}/softmax_{}_cost_{}.pkl.gz".format(folder_cache, model, temp_parameter))
+        plot_cost_function_over_time(cost)
+    return theta
 
 # temp_parameters = [0.5, 1, 2]
 # print('\nsoftmax original \ttest_error:')
@@ -125,23 +125,23 @@ def run_multiclass_svm_on_MNIST(C=0.1):
 #     print('(t = {})  \t\t{:.3}'.format(temp_parameter, softmax_test_error))
 
 
-# #######################################################################
-# # 6. Changing Labels
-# #######################################################################
+#######################################################################
+# 6. Changing Labels
+#######################################################################
 
-# temp_parameters = [0.5, 1, 2]
+temp_parameters = [0.5, 1, 2]
 
-# print('\nsoftmax original \ttest_error_mod3:')
-# for temp_parameter in temp_parameters:
-#     theta = run_softmax("original", train_x, train_y, temp_parameter)
-#     test_error_mod3 = compute_test_error_mod3(test_x, update_y(test_y), theta, temp_parameter)
-#     print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error_mod3))
+print('\nsoftmax original \ttest_error_mod3:')
+for temp_parameter in temp_parameters:
+    theta = run_softmax("original", train_x, train_y, temp_parameter)
+    test_error_mod3 = compute_test_error_mod3(test_x, update_y(test_y), theta, temp_parameter)
+    print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error_mod3))
 
-# print('\nsoftmax mod3 \t\ttest_error:')
-# for temp_parameter in temp_parameters:
-#     theta = run_softmax("mod3", train_x, update_y(train_y), temp_parameter)
-#     test_error = compute_test_error(test_x, update_y(test_y), theta, temp_parameter)
-#     print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error))
+print('\nsoftmax mod3 \t\ttest_error:')
+for temp_parameter in temp_parameters:
+    theta = run_softmax("mod3", train_x, update_y(train_y), temp_parameter, 3)
+    test_error = compute_test_error(test_x, update_y(test_y), theta, temp_parameter)
+    print('(t = {})  \t\t{:.3}'.format(temp_parameter, test_error))
 
 
 #######################################################################
@@ -201,7 +201,7 @@ secondimage_reconstructed = reconstruct_PC(train_pca[1, :], pcs, n_components, t
 # 10. Kernel Methods
 #######################################################################
 
-def run_kernel_softmax(model, kernel, train_x, train_y, temp_parameter, plot_cost=False, folder_cache='./softmax'):
+def run_kernel_softmax(model, kernel, train_x, train_y, temp_parameter, k=10, plot_cost=False, folder_cache='./softmax'):
     """
     Runs softmax_regression on the training set
     
@@ -213,18 +213,19 @@ def run_kernel_softmax(model, kernel, train_x, train_y, temp_parameter, plot_cos
     Returns:
         Final theta
     """
-    theta = read_pickle_data("{}/softmax_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
+    theta = read_pickle_data("{}/softmax_kernel_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
     if theta is None:
-        theta, cost_function_history = softmax_kernel_regression(train_x, train_y, kernel, temp_parameter, alpha=0.3, lambda_factor=1.0e-4, k=10, num_iterations=150)
+        theta, cost_function_history = softmax_kernel_regression(train_x, train_y, kernel, temp_parameter, k=k, alpha=0.3, lambda_factor=1.0e-4, num_iterations=150)
         # Save the model parameters theta obtained from calling softmax_regression to disk.
-        write_pickle_data(theta, "{}/softmax_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
-        write_pickle_data(cost_function_history, "{}/softmax_{}_cost_{}.pkl.gz".format(folder_cache, model,temp_parameter))
+        write_pickle_data(theta, "{}/softmax_kernel_{}_theta_{}.pkl.gz".format(folder_cache, model,temp_parameter))
+        write_pickle_data(cost_function_history, "{}/softmax_kernel_{}_cost_{}.pkl.gz".format(folder_cache, model,temp_parameter))
     if plot_cost:
-        cost = read_pickle_data("{}/softmax_{}_cost_{}.pkl.gz".format(folder_cache, model, temp_parameter))
+        cost = read_pickle_data("{}/softmax_kernel_{}_cost_{}.pkl.gz".format(folder_cache, model, temp_parameter))
         plot_cost_function_over_time(cost)
     return theta
 
-k_train_x, k_train_y = train_pca[0:20000,:], train_y[0:20000]
-theta = run_kernel_softmax("kernel_lineal", linear_kernel, k_train_x, k_train_y, 1)
-test_error = compute_kernel_test_error(test_pca, test_y, linear_kernel, theta, k_train_x, k_train_y, 1)
+temp_parameter = 1
+k_train_x, k_train_y = train_pca, train_y
+theta = run_kernel_softmax("lineal_pca18", linear_kernel, k_train_x, k_train_y, temp_parameter)
+test_error = compute_kernel_test_error(test_pca, test_y, linear_kernel, theta, k_train_x, temp_parameter)
 print(test_error)

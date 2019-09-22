@@ -187,110 +187,103 @@ def compute_test_error(X, Y, theta, temp_parameter):
     assigned_labels = get_classification(X, theta, temp_parameter)
     return 1 - np.mean(assigned_labels == Y)
 
-def compute_kernel_probabilities(theta, YK, temp_parameter):
+def compute_kernel_probabilities(theta, K, temp_parameter):
     """
     Computes, for each datapoint X[i], the probability that X[i] is labeled as j
     for j = 0, 1, ..., k-1
 
     Args:
-        Y - (n, d) NumPy array (n labels)
-        theta - (k, d) NumPy array, where row j represents the parameters of our model for label j
+        theta - (k, n) NumPy array, where row j represents the parameters of our model for label j
         K - (n, n) Numpy array (Kernel Matrix)
         temp_parameter - the temperature parameter of softmax function (scalar)
     Returns:
         H - (k, n) NumPy array, where each entry H[j][i] is the probability that X[i] is labeled as j
     """
-    H = np.empty((theta.shape[0], YK.shape[0]))
-    for i in range(YK.shape[0]):
-        temp = (theta @ YK[i,:].reshape((YK.shape[1], 1)) )[:,0]/temp_parameter
-        temp = temp - np.max(temp)
-        temp = np.exp(temp)
-        H[:,i] = temp/temp.sum()
+    H = np.dot(theta, K)
+    np.divide(H, temp_parameter, out=H)
+    np.subtract(H, np.max(H, axis=0), out=H)
+    np.exp(H, out=H)
+    np.divide(H, H.sum(axis=0), out=H)
     return H
-
-def compute_kernel_cost_function(theta, YK, Y, lambda_factor, temp_parameter):
-    """
-    Computes the total cost over every datapoint.
-
-    Args:
-        Y - (n, d) NumPy array (n labels)
-        theta - (k, d) NumPy array, where row j represents the parameters of our model for label j
-        K - (n, n) Numpy array (Kernel Matrix)
-        lambda_factor - the regularization constant (scalar)
-        temp_parameter - the temperature parameter of softmax function (scalar)
-
-    Returns
-        c - the cost value (scalar)
-    """
-    temp = (theta @ YK)/temp_parameter
-    temp = temp - np.max(temp, axis=0)
-    temp = np.exp(temp)
-    J = np.arange(0, theta.shape[0], 1, dtype=int).reshape((theta.shape[0], 1))
-    return -np.sum((J==Y)*np.log(temp/temp.sum(axis=0)))/Y.shape[0] + (lambda_factor/2)*np.sum(theta @ YK)
-
-def run_kernel_gradient_descent_iteration(theta, YK, Y, alpha, lambda_factor, temp_parameter):
+  
+def run_kernel_gradient_descent_iteration(theta, K, JY, alpha, lambda_factor, temp_parameter, BUFF1, BUFF2):
     """
     Runs one step of batch gradient descent
 
     Args:
-        X - (n, d) NumPy array (n datapoints each with d features)
+        theta - (k, n) Mutable NumPy array, where row j represents the parameters of our model for label j
+        K - (n, n) Numpy array (Kernel Matrix)
         Y - (n, ) NumPy array containing the labels (a number from 0-9) for each
             data point
-        theta - (k, d) NumPy array, where row j represents the parameters of our
-                model for label j
         alpha - the learning rate (scalar)
         lambda_factor - the regularization constant (scalar)
         temp_parameter - the temperature parameter of softmax function (scalar)
+        JY - (k, n) computed (J == Y)
+        BUFF1 (k, n) buffer
+        BUFF2 (k, n) buffer
 
     Returns:
-        theta - (k, d) NumPy array that is the final value of parameters theta
+        cost - escalar that is the cost before currer iteration
     """
-    p = compute_kernel_probabilities(theta, YK, temp_parameter)
-    J = np.arange(0, theta.shape[0], 1).reshape(theta.shape[0],1)
-    J = (J == Y).astype(float)
-    np.subtract(J, p, out=J)
-    np.multiply(J, alpha/(temp_parameter*Y.shape[0]), out = J)
-    return theta - alpha*lambda_factor*theta + J
+    np.dot(theta, K, out=BUFF1)
+    cost2 = (lambda_factor/2)*np.sum(BUFF1)
+
+    np.divide(BUFF1, temp_parameter, out=BUFF1)
+    np.subtract(BUFF1, np.max(BUFF1, axis=0), out=BUFF1)
+    np.exp(BUFF1, out=BUFF1)
+    np.divide(BUFF1, BUFF1.sum(axis=0), out=BUFF1)
+      
+    np.log(BUFF1, out=BUFF2)
+    np.multiply(JY, BUFF2, out=BUFF2)
+    cost = -np.sum(BUFF2)/K.shape[0] + cost2
+
+    np.subtract(JY, BUFF1, out=BUFF1)
+    np.multiply(BUFF1, alpha/(temp_parameter*K.shape[0]), out=BUFF1)
+    np.multiply(theta, (1-alpha*lambda_factor), out=theta)
+    np.add(theta, BUFF1, out=theta)
+    return cost
 
 def softmax_kernel_regression(X, Y, kernel, temp_parameter, alpha, lambda_factor, k, num_iterations):
     """
     Runs batch gradient descent for a specified number of iterations on a dataset
-    with theta initialized to the all-zeros array. Here, theta is a k by d NumPy array
-    where row j represents the parameters of our model for label j for
-    j = 0, 1, ..., k-1
+    with theta initialized to the all-zeros array. Here, theta is a k by n NumPy array
 
     Args:
-        X - (n, d - 1) NumPy array (n data points, each with d-1 features)
-        Y - (n, ) NumPy array containing the labels (a number from 0-9) for each
-            data point
+        X - (n, d) NumPy array (n data points, each with d - 1 features)
+        kernel - Function Kernel
         temp_parameter - the temperature parameter of softmax function (scalar)
         alpha - the learning rate (scalar)
         lambda_factor - the regularization constant (scalar)
         k - the number of labels (scalar)
         num_iterations - the number of iterations to run gradient descent (scalar)
-
+        
     Returns:
         theta - (k, d) NumPy array that is the final value of parameters theta
-        cost_function_progression - a Python list containing the cost calculated at each step of gradient descent
+        cost - a Python list containing the cost calculated at each step of gradient descent
     """
     X = augment_feature_vector(X)
     K = kernel(X,X)
-    YK = Y*K
-    theta = np.zeros([k, X.shape[0]])
-    cost_function_progression = []
-    for _ in range(num_iterations):
-        cost_function_progression.append(compute_kernel_cost_function(theta, YK, Y, lambda_factor, temp_parameter))
-        theta = run_kernel_gradient_descent_iteration(theta, YK, Y, alpha, lambda_factor, temp_parameter)
-    return theta, cost_function_progression
+    theta = np.zeros((k, X.shape[0]))
+    BUFF1 = np.empty((k, X.shape[0]))
+    BUFF2 = np.empty((k, X.shape[0]))
+    J = np.arange(0, theta.shape[0], 1).reshape(theta.shape[0],1)
+    JY = (J == Y).astype(float)  
+    cost = np.array((num_iterations,))
+    for i in range(num_iterations):
+        cost[i] = run_kernel_gradient_descent_iteration(    theta, K, JY, alpha, lambda_factor, 
+                                                            temp_parameter, BUFF1, BUFF2)
+    return theta, cost
 
-def get_kernel_classification(X, kernel, theta, Xt, Yt, temp_parameter):
+def get_kernel_classification(X, kernel, theta, Xt, temp_parameter):
     """
     Makes predictions by classifying a given dataset
 
     Args:
         X - (n, d - 1) NumPy array (n data points, each with d - 1 features)
-        theta - (k, d) NumPy array where row j represents the parameters of our model for
+        kernel - Function Kernel
+        theta - (k, n) NumPy array where row j represents the parameters of our model for
                 label j
+        Xt - (m, d - 1) NumPy array (m data points, each with d - 1 features)
         temp_parameter - the temperature parameter of softmax function (scalar)
 
     Returns:
@@ -300,15 +293,16 @@ def get_kernel_classification(X, kernel, theta, Xt, Yt, temp_parameter):
     X = augment_feature_vector(X)
     Xt = augment_feature_vector(Xt)
     K = kernel(X, Xt)
-    YK = Yt*K
-    probabilities = compute_kernel_probabilities(theta, YK, temp_parameter)
+    probabilities = compute_kernel_probabilities(theta, K, temp_parameter)
     return np.argmax(probabilities, axis = 0)
 
-def compute_kernel_test_error(X, Y, kernel, theta, Xt, Yt, temp_parameter):
-    assigned_labels = get_kernel_classification(X, kernel, theta, Xt, Yt, temp_parameter)
+def compute_kernel_test_error(X, Y, kernel, theta, Xt, temp_parameter):
+    assigned_labels = get_kernel_classification(X, kernel, theta, Xt, temp_parameter)
     return 1 - np.mean(assigned_labels == Y)
 
-def plot_cost_function_over_time(cost_function_history):
+def plot_cost_function_over_time(cost_function_history, title=None):
+    plt.figure()
+    plt.title(title)
     plt.plot(range(len(cost_function_history)), cost_function_history)
     plt.ylabel('Cost Function')
     plt.xlabel('Iteration number')
